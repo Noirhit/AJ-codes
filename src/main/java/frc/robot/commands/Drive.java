@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import static frc.robot.Constants.OperatorConstants.*;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.subsystems.CANDriveSubsystem;
@@ -33,9 +34,23 @@ public class Drive extends Command {
   // stick away from you (a negative value) drives the robot forwards (a positive
   // value). The X axis is scaled down so the rotation is more easily
   // controllable.
+  // **@Override
+  //public void execute() {
+   // driveSubsystem.driveArcade(-controller.getLeftY() * DRIVE_SCALING, -controller.getRightX() * ROTATION_SCALING);
+  //}
+  
   @Override
   public void execute() {
-    driveSubsystem.driveArcade(-controller.getLeftY() * DRIVE_SCALING, -controller.getRightX() * ROTATION_SCALING);
+    // Apply deadband first to eliminate drift, then scale
+    double speed = MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND) * DRIVE_SCALING;
+    double rotation = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND) * ROTATION_SCALING;
+
+    // Square the inputs to give finer control at low speeds
+    // Math.copySign preserves the direction (+ or -) after squaring
+    driveSubsystem.driveArcade(
+        Math.copySign(speed * speed, speed),
+        Math.copySign(rotation * rotation, rotation)
+    );
   }
 
   // Called once the command ends or is interrupted.

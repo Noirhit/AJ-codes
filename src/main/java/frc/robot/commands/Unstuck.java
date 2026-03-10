@@ -32,7 +32,7 @@ public class Unstuck extends Command {
         .setIntakeLauncherRoller(
             -1 * SmartDashboard.getNumber("Intaking intake roller value", INTAKING_INTAKE_VOLTAGE));
     fuelSubsystem
-        .setFeederRoller( 0);
+        .setFeederRoller( -10);
   }
 
   // Called every time the scheduler runs while the command is scheduled. This

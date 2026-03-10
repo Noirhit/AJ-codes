@@ -65,24 +65,17 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    // While the left bumper on operator controller is held, intake Fuel
-    operatorController.leftTrigger().whileTrue(new Intake(fuelSubsystem));
-    // While the right bumper on the operator controller is held, spin up for 1
-    // second, then launch fuel. When the button is released, stop.
-    operatorController.rightTrigger().whileTrue(new LaunchSequence(fuelSubsystem));
-    // While the A button is held on the operator controller, eject fuel back out
-    // the intake
-    operatorController.a().whileTrue(new Eject(fuelSubsystem));
-// While the Y button is held on the operator controller, reverse the launcher
-    operatorController.y().whileTrue(new Unstuck(fuelSubsystem));
-    // Set the default command for the drive subsystem to the command provided by
-    // factory with the values provided by the joystick axes on the driver
-    // controller. The Y axis of the controller is inverted so that pushing the
-    // stick away from you (a negative value) drives the robot forwards (a positive
-    // value)
-    driveSubsystem.setDefaultCommand(new Drive(driveSubsystem, driverController));
+  // While the left trigger is held, intake fuel
+operatorController.leftTrigger().whileTrue(new Intake(fuelSubsystem));
 
-    fuelSubsystem.setDefaultCommand(fuelSubsystem.run(() -> fuelSubsystem.stop()));
+// While the right trigger is held, spin up for 1.5 seconds then launch fuel. When released, stop.
+operatorController.rightTrigger().whileTrue(new LaunchSequence(fuelSubsystem));
+
+// While A is held, eject fuel back out through the intake
+operatorController.a().whileTrue(new Eject(fuelSubsystem));
+
+// While Y is held, reverse the launcher roller to push a stuck ball back inward
+operatorController.y().whileTrue(new Unstuck(fuelSubsystem));
   }
 
   /**
