@@ -17,6 +17,7 @@ import frc.robot.commands.LaunchSequence;
 import frc.robot.subsystems.CANDriveSubsystem;
 import frc.robot.subsystems.CANFuelSubsystem;
 import frc.robot.commands.Unstuck;
+
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -64,18 +65,22 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    // Set the default command for the drive subsystem. This runs every loop when
+    // no other command is using the driveSubsystem, feeding the motor safety
+    // watchdog and allowing the driver to control the robot.
+    driveSubsystem.setDefaultCommand(new Drive(driveSubsystem, driverController));
 
-  // While the left trigger is held, intake fuel
-operatorController.leftTrigger().whileTrue(new Intake(fuelSubsystem));
+    // While the left trigger is held, intake fuel
+    operatorController.leftTrigger().whileTrue(new Intake(fuelSubsystem));
 
-// While the right trigger is held, spin up for 1.5 seconds then launch fuel. When released, stop.
-operatorController.rightTrigger().whileTrue(new LaunchSequence(fuelSubsystem));
+    // While the right trigger is held, spin up for 1.5 seconds then launch fuel. When released, stop.
+    operatorController.rightTrigger().whileTrue(new LaunchSequence(fuelSubsystem));
 
-// While A is held, eject fuel back out through the intake
-operatorController.a().whileTrue(new Eject(fuelSubsystem));
+    // While A is held, eject fuel back out through the intake
+    operatorController.a().whileTrue(new Eject(fuelSubsystem));
 
-// While Y is held, reverse the launcher roller to push a stuck ball back inward
-operatorController.y().whileTrue(new Unstuck(fuelSubsystem));
+    // While Y is held, reverse the launcher roller to push a stuck ball back inward
+    operatorController.y().whileTrue(new Unstuck(fuelSubsystem));
   }
 
   /**

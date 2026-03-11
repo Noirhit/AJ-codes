@@ -61,17 +61,18 @@ public class CANDriveSubsystem extends SubsystemBase {
     config.disableFollowerMode();
     rightLeader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     // Set config to inverted and then apply to left leader. Set Left side inverted
-    // so that postive values drive both sides forward
+    // so that positive values drive both sides forward
     config.inverted(true);
     leftLeader.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
   }
 
   @Override
   public void periodic() {
+    // arcadeDrive() in driveArcade() feeds the motor safety watchdog automatically,
+    // so no manual drive.feed() call is needed here.
   }
 
   public void driveArcade(double xSpeed, double zRotation) {
     drive.arcadeDrive(xSpeed, zRotation);
   }
-
 }
