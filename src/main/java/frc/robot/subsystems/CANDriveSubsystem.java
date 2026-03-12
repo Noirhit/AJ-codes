@@ -31,6 +31,10 @@ public class CANDriveSubsystem extends SubsystemBase {
 
     // set up differential drive class
     drive = new DifferentialDrive(leftLeader, rightLeader);
+    // Disable motor safety watchdog - the Drive command's setDefaultCommand
+    // ensures motors are always commanded during teleop. The watchdog fires
+    // spuriously during disabled mode since WPILib blocks motor output then.
+    drive.setSafetyEnabled(false);
 
     // Set can timeout. Because this project only sets parameters once on
     // construction, the timeout can be long without blocking robot operation. Code
