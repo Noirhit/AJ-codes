@@ -74,7 +74,7 @@ public class RobotContainer {
     operatorController.leftTrigger().whileTrue(new Intake(fuelSubsystem));
 
     // While the right trigger is held, spin up for 1.5 seconds then launch fuel. When released, stop.
-    operatorController.rightTrigger().whileTrue(new LaunchSequence(fuelSubsystem));
+    operatorController.rightTrigger().whileTrue(new Intake(fuelSubsystem));
 
     // While A is held, eject fuel back out through the intake
     operatorController.a().whileTrue(new Eject(fuelSubsystem));
