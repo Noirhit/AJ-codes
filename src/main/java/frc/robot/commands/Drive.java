@@ -30,15 +30,9 @@ public class Drive extends Command {
   }
 
   // Called every time the scheduler runs while the command is scheduled.
-  // The Y axis of the controller is inverted so that pushing the
-  // stick away from you (a negative value) drives the robot forwards (a positive
-  // value). The X axis is scaled down so the rotation is more easily
-  // controllable.
-  // **@Override
-  //public void execute() {
-   // driveSubsystem.driveArcade(-controller.getLeftY() * DRIVE_SCALING, -controller.getRightX() * ROTATION_SCALING);
-  //}
-  
+  // 1. Deadband: ignores tiny joystick inputs so the robot doesn't drift at rest
+  // 2. Scaling: multiplies by DRIVE_SCALING and ROTATION_SCALING to limit max speed
+  // 3. Squared: makes small movements more precise while still allowing full speed at max push
   @Override
   public void execute() {
     // Apply deadband first to eliminate drift, then scale

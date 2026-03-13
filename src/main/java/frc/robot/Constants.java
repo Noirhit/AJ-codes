@@ -42,8 +42,8 @@ public final class Constants {
     public static final double INTAKING_FEEDER_VOLTAGE = -12; //intake rear, left trigger, counterclockwise (metal side facing left)
     public static final double INTAKING_INTAKE_VOLTAGE = 10; //intake front, left trigger, counterclockwise (metal side facing left)
     // if the orange wheel is not upto speed decrease this value so that it gets enough time to speed up to throw farther
-    public static final double LAUNCHING_FEEDER_VOLTAGE = 9; //launch rear, right trigger, clockwise (metal side facing left)
-    public static final double LAUNCHING_LAUNCHER_VOLTAGE = 12; //launch front, right trigger, counterclockwise (metal side facing left)
+    public static final double LAUNCHING_FEEDER_VOLTAGE = -9; //launch rear, right trigger, counterclockwise (metal side facing left) - negative pushes ball toward launcher
+    public static final double LAUNCHING_LAUNCHER_VOLTAGE = -12; //launch front, right trigger, counterclockwise (metal side facing left)
     public static final double SPIN_UP_FEEDER_VOLTAGE = -6;
     // try to increase the speed so that the orange wheel gets time to fully get upto speed
     public static final double SPIN_UP_SECONDS = 1.5;
