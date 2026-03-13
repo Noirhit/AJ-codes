@@ -57,8 +57,8 @@ public final class Constants {
 
     // This value is multiplied by the joystick value when rotating the robot to
     // help avoid turning too fast and beign difficult to control
-    public static final double DRIVE_SCALING = .8;
-    public static final double ROTATION_SCALING = .8;
+    public static final double DRIVE_SCALING = .9;
+    public static final double ROTATION_SCALING = .9;
     public static final double DEADBAND = 0.05; // Deadband for joystick inputs. This helps prevent the robot from moving when the joystick is near the center position.
   }
 }
