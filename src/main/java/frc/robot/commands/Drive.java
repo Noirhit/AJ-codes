@@ -35,15 +35,18 @@ public class Drive extends Command {
   // 3. Squared: makes small movements more precise while still allowing full speed at max push
   @Override
   public void execute() {
+    double currentDriveScaling = controller.leftBumper().getAsBoolean() ? DRIVE_TURBO_SCALING : DRIVE_SCALING;
+    double currentRotationScaling = controller.rightBumper().getAsBoolean() ? ROTATION_TURBO_SCALING : ROTATION_SCALING;
+
     // Apply deadband first to eliminate drift, then scale
-    double speed = MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND) * DRIVE_SCALING;
-    double rotation = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND) * ROTATION_SCALING;
+    double speed = MathUtil.applyDeadband(-controller.getLeftY(), DEADBAND) * currentDriveScaling;
+    double rotation = MathUtil.applyDeadband(-controller.getRightX(), DEADBAND) * currentRotationScaling;
 
     // Square the inputs to give finer control at low speeds
     // Math.copySign preserves the direction (+ or -) after squaring
     driveSubsystem.driveArcade(
-        Math.copySign(speed * speed, speed),
-        Math.copySign(rotation * rotation, rotation)
+        Math.copySign(Math.pow(Math.abs(speed), DRIVE_SENSITIVITY), speed),
+        Math.copySign(Math.pow(Math.abs(rotation), ROTATION_SENSITIVITY), rotation)
     );
   }
 

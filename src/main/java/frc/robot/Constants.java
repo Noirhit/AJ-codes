@@ -42,8 +42,8 @@ public final class Constants {
     public static final double INTAKING_FEEDER_VOLTAGE = -12; //intake rear, left trigger, counterclockwise (metal side facing left)
     public static final double INTAKING_INTAKE_VOLTAGE = 10; //intake front, left trigger, counterclockwise (metal side facing left)
     // if the orange wheel is not upto speed decrease this value so that it gets enough time to speed up to throw farther
-    public static final double LAUNCHING_FEEDER_VOLTAGE = -9; //launch rear, right trigger, counterclockwise (metal side facing left) - negative pushes ball toward launcher
-    public static final double LAUNCHING_LAUNCHER_VOLTAGE = -12; //launch front, right trigger, counterclockwise (metal side facing left)
+    public static final double LAUNCHING_FEEDER_VOLTAGE = 9; //launch rear, right trigger, counterclockwise (metal side facing left) - negative pushes ball toward launcher
+    public static final double LAUNCHING_LAUNCHER_VOLTAGE = 12; //launch front, right trigger, counterclockwise (metal side facing left)
     public static final double SPIN_UP_FEEDER_VOLTAGE = -6;
     // try to increase the speed so that the orange wheel gets time to fully get upto speed
     public static final double SPIN_UP_SECONDS = 1.5;
@@ -57,8 +57,13 @@ public final class Constants {
 
     // This value is multiplied by the joystick value when rotating the robot to
     // help avoid turning too fast and beign difficult to control
-    public static final double DRIVE_SCALING = .9;
-    public static final double ROTATION_SCALING = .9;
-    public static final double DEADBAND = 0.05; // Deadband for joystick inputs. This helps prevent the robot from moving when the joystick is near the center position.
+    public static final double DRIVE_SCALING = .6;
+    public static final double ROTATION_SCALING = .5;
+    public static final double DRIVE_TURBO_SCALING = .9;
+    public static final double ROTATION_TURBO_SCALING = .8;
+
+    public static final double DEADBAND = 0.05;  // Exponent for rotation input squaring
+    public static final double ROTATION_SENSITIVITY = 2.0;// Deadband for joystick inputs. This helps prevent the robot from moving when the joystick is near the center position.
+    public static final double DRIVE_SENSITIVITY = 2.0; // Exponent for drive input squaring. Higher values give finer control at low speeds.
   }
 }
