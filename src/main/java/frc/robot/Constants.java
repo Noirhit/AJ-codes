@@ -51,9 +51,9 @@ public final class Constants {
   }
 
   public static final class VisionConstants {
-    public static final String FRONT_CAMERA_NAME = "Microsoft_LifeCam_HD-3000";
-    public static final String REAR_CAMERA_NAME = "HD Camera";
-    public static final String FUEL_TRAY_CAMERA_NAME = "HD Camera (1)";
+    public static final String FRONT_CAMERA_NAME = "APRILFRONT";
+    public static final String REAR_CAMERA_NAME = "APRILBACK";
+    public static final String FUEL_TRAY_CAMERA_NAME = "INSIDE";
 
     public static final Transform3d FRONT_CAMERA_TO_ROBOT = new Transform3d(
         new Translation3d(0.3, 0.0, 0.5),
@@ -76,15 +76,10 @@ public final class Constants {
     public static final int JAM_FRAME_THRESHOLD = 25;
     public static final double JAM_AREA_CHANGE_THRESHOLD = 0.5;
 
-    // 2025 Reefscape AprilTag IDs
-    public static final int[] REEF_TAG_IDS_RED = {6, 7, 8, 9, 10, 11};
-    public static final int[] REEF_TAG_IDS_BLUE = {17, 18, 19, 20, 21, 22};
-    public static final int[] PROCESSOR_TAG_IDS = {3, 16};
-    public static final int[] BARGE_TAG_IDS = {4, 5, 14, 15};
+    // 2026 REBUILT AprilTag IDs — HUB scoring targets (same for both alliances)
+    public static final int[] HUB_TAG_IDS = {2, 3, 4, 5, 8, 9, 10, 11, 18, 19, 20, 21, 24, 25, 26, 27};
 
-    public static final double REEF_SCORING_DISTANCE = 0.5;
-    public static final double PROCESSOR_SCORING_DISTANCE = 0.3;
-    public static final double BARGE_SCORING_DISTANCE = 0.8;
+    public static final double HUB_SCORING_DISTANCE = 0.5;
   }
 
   public static final class AutoConstants {

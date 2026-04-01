@@ -25,7 +25,7 @@ public class AlignToProcessor extends Command {
     selectedTagId = -1;
     Set<Integer> visible = visionSubsystem.getVisibleTagIds();
     double bestDistance = Double.MAX_VALUE;
-    for (int tagId : PROCESSOR_TAG_IDS) {
+    for (int tagId : HUB_TAG_IDS) {
       if (visible.contains(tagId)) {
         Optional<Double> dist = visionSubsystem.getDistanceToTag(tagId);
         if (dist.isPresent() && dist.get() < bestDistance) {
@@ -45,7 +45,7 @@ public class AlignToProcessor extends Command {
     if (distanceOpt.isEmpty()) {
       return;
     }
-    double distanceError = distanceOpt.get() - PROCESSOR_SCORING_DISTANCE;
+    double distanceError = distanceOpt.get() - HUB_SCORING_DISTANCE;
     double speed = Math.max(-0.4, Math.min(0.4, RANGE_KP * distanceError));
     double rotation = 0;
     Optional<Double> yawOpt = visionSubsystem.getTargetYaw(selectedTagId);
@@ -70,7 +70,7 @@ public class AlignToProcessor extends Command {
     if (distanceOpt.isEmpty()) {
       return false;
     }
-    double distanceError = Math.abs(distanceOpt.get() - PROCESSOR_SCORING_DISTANCE);
+    double distanceError = Math.abs(distanceOpt.get() - HUB_SCORING_DISTANCE);
     Optional<Double> yawOpt = visionSubsystem.getTargetYaw(selectedTagId);
     boolean yawAligned = yawOpt.map(yaw -> Math.abs(yaw) < AIM_TOLERANCE_DEGREES).orElse(false);
     return distanceError < RANGE_TOLERANCE_METERS && yawAligned;

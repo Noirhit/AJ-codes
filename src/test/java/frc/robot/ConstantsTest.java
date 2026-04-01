@@ -91,18 +91,13 @@ class ConstantsTest {
   }
 
   @Test
-  void reefscapeTagIdsAreNonEmpty() {
-    assertTrue(Constants.VisionConstants.REEF_TAG_IDS_RED.length > 0);
-    assertTrue(Constants.VisionConstants.REEF_TAG_IDS_BLUE.length > 0);
-    assertTrue(Constants.VisionConstants.PROCESSOR_TAG_IDS.length > 0);
-    assertTrue(Constants.VisionConstants.BARGE_TAG_IDS.length > 0);
+  void hubTagIdsAreNonEmpty() {
+    assertTrue(Constants.VisionConstants.HUB_TAG_IDS.length > 0);
   }
 
   @Test
   void scoringDistancesArePositive() {
-    assertTrue(Constants.VisionConstants.REEF_SCORING_DISTANCE > 0);
-    assertTrue(Constants.VisionConstants.PROCESSOR_SCORING_DISTANCE > 0);
-    assertTrue(Constants.VisionConstants.BARGE_SCORING_DISTANCE > 0);
+    assertTrue(Constants.VisionConstants.HUB_SCORING_DISTANCE > 0);
   }
 
   @Test

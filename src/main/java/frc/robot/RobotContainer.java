@@ -34,7 +34,7 @@ public class RobotContainer {
     configureBindings();
 
     autoChooser.setDefaultOption("Basic Auto",
-        new ExampleAuto(driveSubsystem, fuelSubsystem));
+        new ExampleAuto(driveSubsystem, visionSubsystem, fuelSubsystem));
   }
 
   private void configureBindings() {

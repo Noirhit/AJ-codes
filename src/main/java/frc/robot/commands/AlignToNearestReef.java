@@ -3,8 +3,6 @@ package frc.robot.commands;
 import java.util.Optional;
 import java.util.Set;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CANDriveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -25,7 +23,7 @@ public class AlignToNearestReef extends Command {
   @Override
   public void initialize() {
     selectedTagId = -1;
-    int[] reefTags = getReefTagsForAlliance();
+    int[] reefTags = HUB_TAG_IDS;
     Set<Integer> visible = visionSubsystem.getVisibleTagIds();
 
     double bestDistance = Double.MAX_VALUE;
@@ -51,7 +49,7 @@ public class AlignToNearestReef extends Command {
       return;
     }
 
-    double distanceError = distanceOpt.get() - REEF_SCORING_DISTANCE;
+    double distanceError = distanceOpt.get() - HUB_SCORING_DISTANCE;
     double speed = Math.max(-0.4, Math.min(0.4, RANGE_KP * distanceError));
 
     double rotation = 0;
@@ -78,17 +76,10 @@ public class AlignToNearestReef extends Command {
     if (distanceOpt.isEmpty()) {
       return false;
     }
-    double distanceError = Math.abs(distanceOpt.get() - REEF_SCORING_DISTANCE);
+    double distanceError = Math.abs(distanceOpt.get() - HUB_SCORING_DISTANCE);
     Optional<Double> yawOpt = visionSubsystem.getTargetYaw(selectedTagId);
     boolean yawAligned = yawOpt.map(yaw -> Math.abs(yaw) < AIM_TOLERANCE_DEGREES).orElse(false);
     return distanceError < RANGE_TOLERANCE_METERS && yawAligned;
   }
 
-  private int[] getReefTagsForAlliance() {
-    Optional<Alliance> alliance = DriverStation.getAlliance();
-    if (alliance.isPresent() && alliance.get() == Alliance.Blue) {
-      return REEF_TAG_IDS_BLUE;
-    }
-    return REEF_TAG_IDS_RED;
-  }
 }
