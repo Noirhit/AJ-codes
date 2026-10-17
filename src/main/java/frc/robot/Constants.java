@@ -25,7 +25,7 @@ public final class Constants {
     public static final double INTAKING_INTAKE_VOLTAGE = -10; //intake front, left trigger, counterclockwise (metal side facing left)
     // if the orange wheel is not upto speed decrease this value so that it gets enough time to speed up to throw farther
     public static final double LAUNCHING_FEEDER_VOLTAGE = -9; //launch rear, right trigger, counterclockwise (metal side facing left) , negative pushes ball toward launcher
-    public static final double LAUNCHING_LAUNCHER_VOLTAGE = -12; //launch front, right trigger, counterclockwise (metal side facing left)
+    public static final double LAUNCHING_LAUNCHER_VOLTAGE = -6; //launch front, right trigger, counterclockwise (metal side facing left)
     public static final double SPIN_UP_FEEDER_VOLTAGE = 6;
     // try to increase the speed so that the orange wheel gets time to fully get upto speed
     public static final double SPIN_UP_SECONDS = 1.5; // Time to run the feeder at spin-up voltage before launching. Negative value means to run indefinitely until the shooter is ready.
@@ -43,7 +43,7 @@ public final class Constants {
     public static final double SHOOTER_kD = 0.0;
     public static final double SHOOTER_kFF = 0.000175;
 
-    public static final double SHOOTER_TARGET_RPM = 4000.0;
+    public static final double SHOOTER_TARGET_RPM = 1500.0;
     public static final double ACCELERATOR_TARGET_RPM = 2000.0;
     public static final double SHOOTER_TOLERANCE_RPM = 100.0;
 
@@ -99,6 +99,6 @@ public final class Constants {
 
     public static final double DEADBAND = 0.05;  // Exponent for rotation input squaring
     public static final double ROTATION_SENSITIVITY = 2.0;// Deadband for joystick inputs. This helps prevent the robot from moving when the joystick is near the center position.
-    public static final double DRIVE_SENSITIVITY = 2.0; // Exponent for drive input squaring. Higher values give finer control at low speeds.
+    public static final double DRIVE_SENSITIVITY = 2.5; // Exponent for drive input squaring. Higher values give finer control at low speeds.
   }
 }
