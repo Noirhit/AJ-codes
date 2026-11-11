@@ -38,7 +38,7 @@ public final class Constants {
     public static final double INTAKING_FEEDER_RPM = 2500;     // intake rear, left trigger
     public static final double INTAKING_INTAKE_RPM = -2500;    // intake front, left trigger
     public static final double LAUNCHING_FEEDER_RPM = -2700;   // launch rear, negative pushes ball toward launcher
-    public static final double LAUNCHING_LAUNCHER_RPM = -4700; // teleop right-trigger shot
+    public static final double LAUNCHING_LAUNCHER_RPM = -1200; // teleop right-trigger shot
     public static final double AUTO_LAUNCHING_LAUNCHER_RPM = -2700; // auto 15s shoot — softer than teleop
     public static final double SPIN_UP_FEEDER_RPM = 500;  // holds ball back while launcher spins up
     public static final double SPIN_UP_SECONDS = 2;
@@ -106,8 +106,8 @@ public final class Constants {
     public static final int DRIVER_CONTROLLER_PORT = 0;
     public static final int OPERATOR_CONTROLLER_PORT = 1;
 
-    public static final double DRIVE_SCALING = 0.8;
-    public static final double ROTATION_SCALING = 0.7;
+    public static final double DRIVE_SCALING = 0.5;
+    public static final double ROTATION_SCALING = 0.6;
     public static final double DRIVE_SLOW_SCALING = 0.6;
     public static final double ROTATION_SLOW_SCALING = 0.5;
 
