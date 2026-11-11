@@ -17,17 +17,14 @@ class ConstantsTest {
       Constants.DriveConstants.LEFT_LEADER_ID,
       Constants.DriveConstants.LEFT_FOLLOWER_ID,
       Constants.DriveConstants.RIGHT_LEADER_ID,
-      Constants.DriveConstants.RIGHT_FOLLOWER_ID,
-      Constants.ShooterConstants.UPPER_FLYWHEEL_ID,
-      Constants.ShooterConstants.LOWER_FLYWHEEL_ID,
-      Constants.ShooterConstants.ACCELERATOR_ID
+      Constants.DriveConstants.RIGHT_FOLLOWER_ID
     };
 
     for (int id : allIds) {
       assertTrue(ids.add(id), "Duplicate CAN ID found: " + id);
     }
 
-    assertEquals(9, ids.size());
+    assertEquals(6, ids.size());
   }
 
   @Test
@@ -38,10 +35,7 @@ class ConstantsTest {
       Constants.DriveConstants.LEFT_LEADER_ID,
       Constants.DriveConstants.LEFT_FOLLOWER_ID,
       Constants.DriveConstants.RIGHT_LEADER_ID,
-      Constants.DriveConstants.RIGHT_FOLLOWER_ID,
-      Constants.ShooterConstants.UPPER_FLYWHEEL_ID,
-      Constants.ShooterConstants.LOWER_FLYWHEEL_ID,
-      Constants.ShooterConstants.ACCELERATOR_ID
+      Constants.DriveConstants.RIGHT_FOLLOWER_ID
     };
 
     for (int id : allIds) {
@@ -50,31 +44,9 @@ class ConstantsTest {
   }
 
   @Test
-  void shooterPidConstantsAreNonNegative() {
-    assertTrue(Constants.ShooterConstants.SHOOTER_kP >= 0, "kP must be non-negative");
-    assertTrue(Constants.ShooterConstants.SHOOTER_kI >= 0, "kI must be non-negative");
-    assertTrue(Constants.ShooterConstants.SHOOTER_kD >= 0, "kD must be non-negative");
-    assertTrue(Constants.ShooterConstants.SHOOTER_kFF >= 0, "kFF must be non-negative");
-  }
-
-  @Test
-  void shooterTargetRpmIsPositive() {
-    assertTrue(Constants.ShooterConstants.SHOOTER_TARGET_RPM > 0);
-    assertTrue(Constants.ShooterConstants.ACCELERATOR_TARGET_RPM > 0);
-  }
-
-  @Test
-  void shooterToleranceIsPositive() {
-    assertTrue(Constants.ShooterConstants.SHOOTER_TOLERANCE_RPM > 0);
-  }
-
-  @Test
   void currentLimitsAreWithinSafeRange() {
     assertTrue(Constants.DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT > 0);
     assertTrue(Constants.DriveConstants.DRIVE_MOTOR_CURRENT_LIMIT <= 80);
-
-    assertTrue(Constants.ShooterConstants.FLYWHEEL_CURRENT_LIMIT > 0);
-    assertTrue(Constants.ShooterConstants.FLYWHEEL_CURRENT_LIMIT <= 80);
 
     assertTrue(Constants.FuelConstants.FEEDER_MOTOR_CURRENT_LIMIT > 0);
     assertTrue(Constants.FuelConstants.LAUNCHER_MOTOR_CURRENT_LIMIT > 0);
@@ -110,10 +82,10 @@ class ConstantsTest {
   void driveScalingIsValid() {
     assertTrue(Constants.OperatorConstants.DRIVE_SCALING > 0);
     assertTrue(Constants.OperatorConstants.DRIVE_SCALING <= 1.0);
-    assertTrue(Constants.OperatorConstants.DRIVE_TURBO_SCALING > 0);
-    assertTrue(Constants.OperatorConstants.DRIVE_TURBO_SCALING <= 1.0);
+    assertTrue(Constants.OperatorConstants.DRIVE_SLOW_SCALING > 0);
+    assertTrue(Constants.OperatorConstants.DRIVE_SLOW_SCALING <= 1.0);
     assertTrue(
-        Constants.OperatorConstants.DRIVE_TURBO_SCALING
-            >= Constants.OperatorConstants.DRIVE_SCALING);
+        Constants.OperatorConstants.DRIVE_SLOW_SCALING
+            <= Constants.OperatorConstants.DRIVE_SCALING);
   }
 }

@@ -1,48 +1,40 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CANFuelSubsystem;
+import java.util.function.DoubleSupplier;
 import static frc.robot.Constants.FuelConstants.*;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SpinUp extends Command {
-  /** Creates a new Intake. */
+  private final CANFuelSubsystem fuelSubsystem;
+  private final DoubleSupplier launcherRPM;
 
-  CANFuelSubsystem fuelSubsystem;
-
-  public SpinUp(CANFuelSubsystem fuelSystem) {
-    addRequirements(fuelSystem);
-    this.fuelSubsystem = fuelSystem;
+  // Fixed RPM — used for teleop with SmartDashboard values
+  public SpinUp(CANFuelSubsystem fuelSubsystem) {
+    this(fuelSubsystem,
+        () -> SmartDashboard.getNumber(CANFuelSubsystem.KEY_LAUNCHING_LAUNCHER, LAUNCHING_LAUNCHER_RPM));
   }
 
-  // Called when the command is initially scheduled. Set the rollers to the
-  // appropriate values for intaking
-  @Override
-  public void initialize() {
-    fuelSubsystem
-        .setIntakeLauncherRoller(
-            SmartDashboard.getNumber("Launching launcher roller value", LAUNCHING_LAUNCHER_VOLTAGE));
-    fuelSubsystem.setFeederRoller(SmartDashboard.getNumber("Spin-up feeder roller value", SPIN_UP_FEEDER_VOLTAGE));
+  // Dynamic RPM — used when distance-based RPM is calculated first
+  public SpinUp(CANFuelSubsystem fuelSubsystem, DoubleSupplier launcherRPM) {
+    this.fuelSubsystem = fuelSubsystem;
+    this.launcherRPM = launcherRPM;
+    addRequirements(fuelSubsystem);
   }
 
-  // Called every time the scheduler runs while the command is scheduled. This
-  // command doesn't require updating any values while running
   @Override
   public void execute() {
+    fuelSubsystem.setIntakeLauncherRoller(launcherRPM.getAsDouble());
+    fuelSubsystem.setFeederRoller(
+        SmartDashboard.getNumber(CANFuelSubsystem.KEY_SPINUP_FEEDER, SPIN_UP_FEEDER_RPM));
   }
 
-  // Called once the command ends or is interrupted. Stop the rollers
   @Override
   public void end(boolean interrupted) {
-    fuelSubsystem.stop();
+    if (interrupted) fuelSubsystem.stop();
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

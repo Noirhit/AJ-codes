@@ -14,6 +14,8 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.HttpCamera;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,12 +36,23 @@ public class VisionSubsystem extends SubsystemBase {
   private boolean hasTarget = false;
   private PhotonTrackedTarget bestTarget = null;
   private final Set<Integer> visibleTagIds = new HashSet<>();
+  private PhotonPipelineResult latestFrontResult = null;
+  private PhotonPipelineResult latestRearResult = null;
 
   public VisionSubsystem() {
     frontCamera = new PhotonCamera(FRONT_CAMERA_NAME);
     rearCamera = new PhotonCamera(REAR_CAMERA_NAME);
 
-    fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+    // Publish camera streams to SmartDashboard
+    // Add a "Camera Stream" widget in SmartDashboard and select the camera name
+    CameraServer.startAutomaticCapture(
+        new HttpCamera("Front AprilTag", FRONT_CAMERA_STREAM_URL));
+    CameraServer.startAutomaticCapture(
+        new HttpCamera("Rear AprilTag", REAR_CAMERA_STREAM_URL));
+    CameraServer.startAutomaticCapture(
+        new HttpCamera("Fuel Tray", FUEL_TRAY_STREAM_URL));
+
+    fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     frontPoseEstimator = new PhotonPoseEstimator(
         fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
@@ -67,7 +80,7 @@ public class VisionSubsystem extends SubsystemBase {
       estimatedPose = latestRearPose.get().estimatedPose.toPose2d();
     }
 
-    SmartDashboard.putBoolean("Vision Has Target", hasTarget);
+    SmartDashboard.putBoolean("Vision Sees Tag", hasTarget);
     SmartDashboard.putNumber("Vision Pose X", estimatedPose.getX());
     SmartDashboard.putNumber("Vision Pose Y", estimatedPose.getY());
     SmartDashboard.putNumber("Vision Pose Rotation", estimatedPose.getRotation().getDegrees());
@@ -83,6 +96,9 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     PhotonPipelineResult latestResult = results.get(results.size() - 1);
+    // Cache the result so getTargetYaw() can use it without re-reading
+    if (camera == frontCamera) latestFrontResult = latestResult;
+    else latestRearResult = latestResult;
     if (!latestResult.hasTargets()) {
       return Optional.empty();
     }
@@ -137,6 +153,27 @@ public class VisionSubsystem extends SubsystemBase {
     return Optional.ofNullable(bestTarget);
   }
 
+  public Optional<PhotonTrackedTarget> getBestHubTarget() {
+    PhotonTrackedTarget best = null;
+    for (int id : HUB_TAG_IDS) {
+      if (latestFrontResult != null) {
+        for (PhotonTrackedTarget t : latestFrontResult.getTargets()) {
+          if (t.getFiducialId() == id) {
+            if (best == null || t.getArea() > best.getArea()) best = t;
+          }
+        }
+      }
+      if (latestRearResult != null) {
+        for (PhotonTrackedTarget t : latestRearResult.getTargets()) {
+          if (t.getFiducialId() == id) {
+            if (best == null || t.getArea() > best.getArea()) best = t;
+          }
+        }
+      }
+    }
+    return Optional.ofNullable(best);
+  }
+
   public Pose2d getEstimatedPose() {
     return estimatedPose;
   }
@@ -153,35 +190,59 @@ public class VisionSubsystem extends SubsystemBase {
     return visibleTagIds;
   }
 
-  public Optional<Double> getTargetYaw(int tagId) {
-    for (PhotonPipelineResult result : frontCamera.getAllUnreadResults()) {
-      for (PhotonTrackedTarget target : result.getTargets()) {
-        if (target.getFiducialId() == tagId) {
-          return Optional.of(target.getYaw());
-        }
+  public Optional<Double> getDistanceToNearestHubTag() {
+    double closest = Double.MAX_VALUE;
+    for (int id : HUB_TAG_IDS) {
+      Optional<Double> dist = getDistanceToTag(id);
+      if (dist.isPresent() && dist.get() < closest) {
+        closest = dist.get();
       }
     }
-    for (PhotonPipelineResult result : rearCamera.getAllUnreadResults()) {
-      for (PhotonTrackedTarget target : result.getTargets()) {
-        if (target.getFiducialId() == tagId) {
-          return Optional.of(target.getYaw());
-        }
+    if (closest == Double.MAX_VALUE) return Optional.empty();
+    SmartDashboard.putNumber("Hub Distance (m)", closest);
+    return Optional.of(closest);
+  }
+
+  /** Find a target with the given tag ID, checking cached front result first, then rear. */
+  private Optional<PhotonTrackedTarget> findTargetInAnyCamera(int tagId) {
+    if (latestFrontResult != null) {
+      for (PhotonTrackedTarget target : latestFrontResult.getTargets()) {
+        if (target.getFiducialId() == tagId) return Optional.of(target);
+      }
+    }
+    if (latestRearResult != null) {
+      for (PhotonTrackedTarget target : latestRearResult.getTargets()) {
+        if (target.getFiducialId() == tagId) return Optional.of(target);
       }
     }
     return Optional.empty();
   }
 
   public Optional<Double> getDistanceToTag(int tagId) {
-    Optional<Pose3d> tagPose = fieldLayout.getTagPose(tagId);
-    if (tagPose.isEmpty() || !hasTarget) {
-      return Optional.empty();
-    }
-    double distance = tagPose.get().toPose2d().getTranslation()
-        .getDistance(estimatedPose.getTranslation());
-    return Optional.of(distance);
+    return findTargetInAnyCamera(tagId)
+        .map(t -> t.getBestCameraToTarget().getTranslation().getNorm());
+  }
+
+  public Optional<Double> getTargetYaw(int tagId) {
+    return findTargetInAnyCamera(tagId).map(PhotonTrackedTarget::getYaw);
   }
 
   public void resetPose(Pose2d pose) {
     this.estimatedPose = pose;
+  }
+/**
+ * Returns the correct Hub AprilTag ID to aim at based on current alliance.
+ * Call this at the START of auto, not during — alliance data may not be
+ * ready instantly on boot.
+ */
+  public static int getAutoTargetTagId() {
+      var alliance = edu.wpi.first.wpilibj.DriverStation.getAlliance();
+      if (alliance.isPresent()) {
+          return alliance.get() == edu.wpi.first.wpilibj.DriverStation.Alliance.Red
+             ? AUTO_TARGET_TAG_RED
+              : AUTO_TARGET_TAG_BLUE;
+     }
+      // Default to red if alliance unknown — better than crashing
+      return AUTO_TARGET_TAG_RED;
   }
 }

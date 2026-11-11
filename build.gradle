@@ -105,3 +105,21 @@ wpi.java.configureTestTasks(test)
 tasks.withType(JavaCompile) {
     options.compilerArgs.add '-XDstringConcat=inline'
 }
+
+// Stamp every build with the project folder it came from and the build time.
+// Robot.robotInit() prints this to the Driver Station console, so you can always
+// see exactly which code is running on the roboRIO (and when it was built/deployed).
+def buildInfoDir = layout.buildDirectory.dir("generated/buildinfo")
+tasks.register("generateBuildInfo") {
+    outputs.dir(buildInfoDir)
+    outputs.upToDateWhen { false } // always refresh the timestamp
+    doLast {
+        def dir = buildInfoDir.get().asFile
+        dir.mkdirs()
+        new File(dir, "buildinfo.properties").text =
+            "project=${project.projectDir.absolutePath.replace('\\', '/')}\n" +
+            "built=${new Date().format('yyyy-MM-dd HH:mm:ss')}\n"
+    }
+}
+sourceSets.main.resources.srcDir(buildInfoDir)
+tasks.named("processResources") { dependsOn "generateBuildInfo" }

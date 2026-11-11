@@ -1,23 +1,39 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.FuelConstants;
 import frc.robot.subsystems.CANFuelSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class LaunchSequence extends SequentialCommandGroup {
-  /** Creates a new LaunchSequence. */
+
+  // Teleop launch — reads launcher RPM from SmartDashboard, falls back to LAUNCHING_LAUNCHER_RPM
   public LaunchSequence(CANFuelSubsystem fuelSubsystem) {
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
     addCommands(
         new SpinUp(fuelSubsystem).withTimeout(FuelConstants.SPIN_UP_SECONDS),
         new Launch(fuelSubsystem));
+  }
+
+  // Auto launch — fixed RPM passed in (e.g. AUTO_LAUNCHING_LAUNCHER_RPM)
+  public LaunchSequence(CANFuelSubsystem fuelSubsystem, double fixedRpm) {
+    addCommands(
+        new SpinUp(fuelSubsystem, () -> fixedRpm).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+        new Launch(fuelSubsystem, () -> fixedRpm));
+  }
+
+  // Distance-based launch — measures hub distance via vision, looks up RPM in table.
+  // Falls back to LAUNCHING_LAUNCHER_RPM if no hub tag is visible.
+  // Reserved for future use — not currently active in auto or teleop.
+  public LaunchSequence(CANFuelSubsystem fuelSubsystem, VisionSubsystem visionSubsystem) {
+    double[] rpm = { FuelConstants.LAUNCHING_LAUNCHER_RPM };
+
+    addCommands(
+        new InstantCommand(() -> visionSubsystem.getDistanceToNearestHubTag()
+            .ifPresent(dist -> rpm[0] = FuelConstants.LAUNCHER_RPM_TABLE.get(dist))),
+
+        new SpinUp(fuelSubsystem, () -> rpm[0]).withTimeout(FuelConstants.SPIN_UP_SECONDS),
+
+        new Launch(fuelSubsystem, () -> rpm[0]));
   }
 }

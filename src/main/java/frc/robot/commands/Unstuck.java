@@ -1,22 +1,11 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CANFuelSubsystem;
 import static frc.robot.Constants.FuelConstants.*;
-/**
- * Unstuck: reverses the launcher roller briefly to push a stuck ball back inward.
- * The feeder roller stays still so the ball is guided back into the mechanism
- * rather than fully ejected. After releasing Y, you can eject or try launching again.
- */
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Unstuck extends Command {
-  /** Creates a new Unstuck. */
 
+public class Unstuck extends Command {
   CANFuelSubsystem fuelSubsystem;
 
   public Unstuck(CANFuelSubsystem fuelSystem) {
@@ -24,31 +13,25 @@ public class Unstuck extends Command {
     this.fuelSubsystem = fuelSystem;
   }
 
-  // Called when the command is initially scheduled. Set the rollers to the
-  // appropriate values for ejecting
   @Override
   public void initialize() {
-    fuelSubsystem
-        .setIntakeLauncherRoller(
-            -1 * SmartDashboard.getNumber("Intaking intake roller value", INTAKING_INTAKE_VOLTAGE));
-    fuelSubsystem
-        .setFeederRoller( -10);
+
   }
 
-  // Called every time the scheduler runs while the command is scheduled. This
-  // command doesn't require updating any values while running
   @Override
   public void execute() {
+    fuelSubsystem.setIntakeLauncherRoller(
+        -1 * SmartDashboard.getNumber(CANFuelSubsystem.KEY_INTAKING_INTAKE, INTAKING_INTAKE_RPM));
+    fuelSubsystem.setFeederRoller(
+        -1 * SmartDashboard.getNumber(CANFuelSubsystem.KEY_UNSTUCK_FEEDER, UNSTUCK_FEEDER_RPM));
   }
 
-  // Called once the command ends or is interrupted. Stop the rollers
   @Override
   public void end(boolean interrupted) {
     fuelSubsystem.setIntakeLauncherRoller(0);
     fuelSubsystem.setFeederRoller(0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;
